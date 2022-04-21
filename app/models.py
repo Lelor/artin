@@ -11,17 +11,19 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     given_name = db.Column(db.String(30), nullable=False)
     family_name = db.Column(db.String(80), nullable=False)
-    type = db.Column(db.String(10), nullable=False)
-    birth_date = db.Column(db.Date, nullable=False)
-    address = db.Column(db.String(120), nullable=False)
-    picture = db.Column(db.String(120), nullable=False)
+    type = db.Column(db.String(10))
+    birth_date = db.Column(db.Date)
+    address = db.Column(db.String(120))
+    picture = db.Column(db.String(120))
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     modality_id = db.Column(db.Integer, db.ForeignKey('modality.id'))
     place_id = db.Column(db.Integer, db.ForeignKey('place.id'))
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, given_name, family_name):
+        self.given_name = given_name
+        self.family_name = family_name
         self.username = username
         self.password = generate_password_hash(password)
         self.email = email
