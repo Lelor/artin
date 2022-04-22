@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from '../utils'
 import { Text, View, StyleSheet, Image, TextInput} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
@@ -9,24 +9,15 @@ import Button from '../components/Button'
 
 
 const Login = (props: any) => {
-  const navigation = useNavigation()
   const [loginState, setLoginState] = useState({email: '', password: ''})
   const [screenState, setScreenState] = useState({error: false})
-  // const token = async () => await AsyncStorage.getItem('TOKEN')
-  axios.get('/whoami').then(res => {
-    if (res.status === 200)
-      navigation.navigate('Main')
-  })
+
   const submitLogin = async () => {
     await axios.post('/login', loginState)
     .then(async (res: any)=>{
-      // axios.defaults.headers['Authorization'] = `Bearer ${res.data.access_token}`
       await AsyncStorage.setItem('TOKEN', res.data.access_token)
-      props.dispatch(loginAction(res.data.access_token))
-      navigation.navigate('Main')
     })
     .catch(err => {
-      // console.log(err)
       if (err.status !== 200)
         setScreenState({...screenState, error: true})
     })

@@ -13,7 +13,7 @@ const initialState = {
 function rootReducer(state: any = initialState, action: any) {
     switch(action.type) {
         case 'LOGIN':
-            return {...state, token: action.token}
+            return {...state, token: action.token};
     }
     return state
 }
