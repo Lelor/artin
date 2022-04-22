@@ -1,5 +1,3 @@
-import { StatusBar } from 'react-native'
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux'
@@ -23,7 +21,12 @@ function MainApp(props: any) {
     backgroundColor="#61dafb"
     hidden={false}
     /> */}
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator
+      initialRouteName="Login"
+      screenOptions={{
+        headerShown: false
+      }}
+    >
         <Stack.Screen name="Login">
           {(otherProps: any) => <Login {...props} {...otherProps}/>}
         </Stack.Screen>

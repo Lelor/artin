@@ -33,7 +33,7 @@ def login_route(data):
     usr = User.query.filter(User.email == data['email']).first()
     if usr and usr.check_password(data['password']):
         return jsonify(access_token=create_access_token(identity=usr.id))
-    return 'não ok'
+    return 'não ok', 403
 
 
 @bp.route('/whoami', methods=['GET'])

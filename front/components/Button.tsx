@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet } from 'react-native'
 
 const Button = (props: any) => (
   <TouchableOpacity
-    style={[props.style, styles.button]}
+    style={[styles.button, props.style]}
     onPress={props.onPress}
     >
     {props.children}
@@ -17,7 +17,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#b0b0b0',
     width: 70,
-    height: 30
+    height: 30,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#b0b0b0',
+    fontWeight: 'bold'
   }
 })
 

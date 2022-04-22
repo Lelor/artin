@@ -3,7 +3,7 @@ import axios from '../utils'
 import { Text, View, StyleSheet, Image, TextInput} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { loginAction } from '../reducers'
-import { connect } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Input from '../components/TextInput'
 import Button from '../components/Button'
 
@@ -11,13 +11,24 @@ import Button from '../components/Button'
 const Login = (props: any) => {
   const navigation = useNavigation()
   const [loginState, setLoginState] = useState({email: '', password: ''})
-
+  const [screenState, setScreenState] = useState({error: false})
+  // const token = async () => await AsyncStorage.getItem('TOKEN')
+  axios.get('/whoami').then(res => {
+    if (res.status === 200)
+      navigation.navigate('Main')
+  })
   const submitLogin = async () => {
     await axios.post('/login', loginState)
-    .then((res: any)=>{
-      axios.defaults.headers['Authorization'] = `Bearer ${res.data.access_token}`
+    .then(async (res: any)=>{
+      // axios.defaults.headers['Authorization'] = `Bearer ${res.data.access_token}`
+      await AsyncStorage.setItem('TOKEN', res.data.access_token)
       props.dispatch(loginAction(res.data.access_token))
-      navigation.navigate('Main', {token: props.token})
+      navigation.navigate('Main')
+    })
+    .catch(err => {
+      // console.log(err)
+      if (err.status !== 200)
+        setScreenState({...screenState, error: true})
     })
   }
 
@@ -33,28 +44,33 @@ const Login = (props: any) => {
         style={styles.loginContainer}
       >
         <Input
-          // underlineColorAndroid='transparent'
           placeholder="Email"
+          error={screenState.error}
           style={styles.input}
           onChangeText={(text: String) => (setLoginState({...loginState, email: text}))}
         />
         <Input
-          // underlineColorAndroid='transparent'
+          secureTextEntry={true}
           placeholder="Password"
+          error={screenState.error}
           onChangeText = {(text: String) => (setLoginState({...loginState, password: text}))}
-          style={[{marginTop: 10}, styles.input]}
+          style={[{marginTop: 10, width: 150}, styles.input]}
         />
+        {screenState.error && 
+          <Text
+            style={styles.errorText}
+          >
+            Deu ruim menor
+          </Text>}
         <Button
           style={styles.button}
           onPress={submitLogin}
         >
-          <Text>Submit</Text>
-        </Button>
-        <Button
-          style={styles.button}
-          onPress={()=>{console.log(props.token)}}
-        >
-          <Text>storedata</Text>
+          <Text
+            style={{fontWeight: 'bold'}}
+          >
+            Login
+          </Text>
         </Button>
       </View>  
     </View>
@@ -69,7 +85,7 @@ const styles = StyleSheet.create({
     marginBottom: 25
   },
   loginContainer: {
-    borderColor: 'red',
+    borderColor: 'black',
     borderWidth: 1,
     width: 300,
     height: 400,
@@ -86,17 +102,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   input: {
-    width: 100,
+    // width: 100,
     fontSize: 20,
     textAlign: 'center',
     borderBottomWidth: 1,
     borderColor: '#b0b0b0'
   },
   button: {
-    width: 60,
-    height: 25,
-    marginTop: 50,
-    backgroundColor: '#b0b0b0'
+    width: 100,
+    height: 45,
+    marginTop: 80,
+    backgroundColor: '#8cff66'
+  },
+  errorText: {
+    color: 'red',
+    paddingTop: 15
   }
 })
 

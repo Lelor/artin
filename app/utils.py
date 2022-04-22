@@ -9,7 +9,7 @@ def deserialize(schema):
                 data = schema.load(request.json)
                 return func(data, *args, **kwargs)
             except ValidationError as err:
-                return jsonify(err.messages)
+                return jsonify(err.messages), 400
         return _decorator
     return _inner
             
