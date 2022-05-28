@@ -1,23 +1,41 @@
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native'
+import MainTabs, { Tab } from '../components/Tabs'
+import UserPosts from '../screens/UserPosts'
+import { useNavigation } from '@react-navigation/native'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
 
-const FooterButton = (props: any) => (
+export const FooterButton = (props: any) => (
     <TouchableOpacity
       style={styles.footerButton}
+      onPress={props.onPress}
     >
-        <Text>teste</Text>
+        <Text>{props.title}</Text>
     </TouchableOpacity>
 )
 
 
-const Footer = (props: any) => (
+const Footer = (props: any) => {
+  const navigation = useNavigation()
+  return (
     <View style={[props.style, styles.footerView]}>
-      <FooterButton/>
-      <FooterButton/>
-      <FooterButton/>
-      <FooterButton/>
+      <FooterButton
+        title='Home'
+        onPress={() => {navigation.navigate('Main')}}
+      />
+      <FooterButton
+        title='Atividades'
+      />
+      <FooterButton
+        title='Registros'
+        onPress={() => {navigation.navigate('UserPosts')}}
+      />
+      <FooterButton
+        title='Perfil'
+      />
     </View>
   )
+}
 
 
 const styles = StyleSheet.create({
@@ -28,6 +46,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     footerView: {
+        height: 60,
         borderTopWidth: 1,
         borderColor: "#b0b0b0",
         flexDirection: "row",

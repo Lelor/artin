@@ -1,6 +1,7 @@
 import { StyleSheet, ScrollView } from 'react-native'
 import Button from './Button'
 import Card from './Card'
+import Modal from './Modal'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import axios from '../utils'
 const mockCards = [
@@ -77,14 +78,14 @@ const Teste = (props: any) => (
     </ScrollView>
   )
   
-const Tab: any = createMaterialTopTabNavigator();
+export const Tab: any = createMaterialTopTabNavigator();
 
 
 const Tabs = (props: any) => (
     <Tab.Navigator>
       <Tab.Screen 
           name='Home'
-          component={Card}/>
+          component={Modal}/>
       <Tab.Screen 
           name='Xpto'
           component={Teste}/>

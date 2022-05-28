@@ -14,6 +14,8 @@ function rootReducer(state: any = initialState, action: any) {
     switch(action.type) {
         case 'LOGIN':
             return {...state, token: action.token};
+        case 'LOGOUT':
+            return {...state, token: ''};
     }
     return state
 }

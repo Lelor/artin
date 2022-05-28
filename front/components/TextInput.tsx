@@ -12,8 +12,9 @@ const Input = (props: any) =>{
     return (
         <TextInput
             // underlineColorAndroid='transparent'
-            placeholder={props.placeholder || "Text here"}
-            style={[props.style, styles.input, ...additionalStyles]}
+            {...props}
+            placeholder={props.placeholder || ""}
+            style={[styles.input, props.style, ...additionalStyles]}
             secureTextEntry={props.secureTextEntry || false}
             onChangeText={props.onChangeText}
         />

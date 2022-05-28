@@ -1,5 +1,6 @@
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import false
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -50,6 +51,20 @@ class Activity(db.Model):
     cost = db.Column(db.Float)
     comments = db.Column(db.Text)
     modality_id = db.Column(db.Integer, db.ForeignKey('modality.id'))
+    image = db.Column(db.Text)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'description': self.description,
+            'address': self.address,
+            'max_capacity': self.max_capacity,
+            'start_date': self.start_date,
+            'image': self.image,
+            'is_favorite': False
+        }
 
 
 class Place(db.Model):

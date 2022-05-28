@@ -2,20 +2,22 @@ import { useState, useEffect } from 'react'
 import axios from '../utils'
 import { Text, View, StyleSheet, Image, TextInput} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
-import { loginAction } from '../reducers'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Input from '../components/TextInput'
 import Button from '../components/Button'
+import { useDispatch } from 'react-redux';
 
 
-const Login = (props: any) => {
+const Login = (props) => {
   const [loginState, setLoginState] = useState({email: '', password: ''})
   const [screenState, setScreenState] = useState({error: false})
-
+  const dispatch = useDispatch()
+  const nav = useNavigation()
   const submitLogin = async () => {
-    await axios.post('/login', loginState)
+    await axios().post('/login', loginState)
     .then(async (res: any)=>{
       await AsyncStorage.setItem('TOKEN', res.data.access_token)
+      dispatch({type: 'LOGIN', token: res.data.access_token})
     })
     .catch(err => {
       if (err.status !== 200)
@@ -51,7 +53,7 @@ const Login = (props: any) => {
           <Text
             style={styles.errorText}
           >
-            Deu ruim menor
+            Credenciais inválidas
           </Text>}
         <Button
           style={styles.button}

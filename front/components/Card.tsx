@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { View, Image, Text, StyleSheet } from 'react-native'
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 
 const Card = (props: any) => {
@@ -12,40 +12,71 @@ const Card = (props: any) => {
 
   return (
     <>
-    <View
-      style={props.style}
+    <TouchableOpacity
+      style={[props.style, styles.shadow]}
+      onPress={props.onPress}
+      activeOpacity={1}
     >
-      <Icon
-        name='bookmark'
-        size={25}
-        style={[styles.icon]}        
-        solid={cardState.favorite}
-        onPress={toggleBookmark}
-      />
+      {
+        props.editable?
+        <>
+        </>
+        :
+        <Icon
+          name='bookmark'
+          size={25}
+          style={[styles.icon]}        
+          solid={cardState.favorite}
+          onPress={toggleBookmark}
+        />
+      }
       <View
-        style={styles.card}
+        style={[styles.card]}
       >
         <Image
           style={styles.image}
-          source={require('../assets/gnu-logo.png')}
+          // source={require('../assets/gnu-logo.png')}
+          source={props.image? {
+            uri: `data:image/png;base64,${props.image}`
+          } : require('../assets/gnu-logo.png')}
         />
-        <Text
-          style={styles.text}
-          numberOfLines={7}
+        <View
+          style={styles.outline}
         >
-          {props.description}
-        </Text>
+          <Icon
+            name='trash-alt'
+            size={20}
+            style={styles.editIcons}
+            solid
+          />
+          <Text
+            style={styles.text}
+            numberOfLines={7}
+          >
+            {props.description}
+          </Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
     </>
   )
 }
 
 
 const styles = StyleSheet.create({
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   card: {
     // margin: 20,
-    borderColor: 'red',
+    borderColor: '#b4b4b4',
     borderWidth: 1,
     height: 170,
     width: 340,
@@ -58,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: 'red',
     borderWidth: 1,
-    height: 150,
+    height: 124,
     width: 210,
     fontSize: 17
   },
@@ -72,6 +103,19 @@ const styles = StyleSheet.create({
     marginLeft: 300,
     marginTop: -3,
     zIndex: 1,
+  },
+  editIcons: {
+    padding: 8,
+    // fontSize: 24,
+    alignSelf: 'flex-end'
+    // paddingTop: 0
+  },
+  outline: {
+    // borderColor: 'red',
+    // borderWidth: 1,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'space-between'
   }
 })
 
