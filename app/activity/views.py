@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, current_user
 
 from app.activity.serializer import ActivitySchema
 from app.utils import deserialize, validate
-from app.models import Activity, db
+from app.models import User, Activity, UserActivity, db
 
 
 bp = Blueprint('activity', __name__, url_prefix='/activity')
@@ -60,6 +60,7 @@ def delete_activity(activity_id):
         if current_user.id is not activity.created_by:
             abort(403)
         db.session.delete(activity)
+        db.session.commit()
         return {'activity': activity.id}, 200
     except Exception as err:
         raise
@@ -69,11 +70,63 @@ def delete_activity(activity_id):
 @jwt_required()
 def list_user_activities():
     try:
-        activities = Activity.query.filter(
-            Activity.created_by == current_user.id
+        # activities = Activity.query.filter(
+        #     Activity.created_by == current_user.id
+        # )
+        activities = Activity.query\
+            .join(UserActivity, UserActivity.user_id == current_user.id, isouter=True)\
+            .with_entities(
+                Activity.id,
+                Activity.type,
+                Activity.description,
+                Activity.address,
+                Activity.max_capacity,
+                Activity.start_date,
+                Activity.image,
+                UserActivity.id.label('is_favorite')
+            )
+        return jsonify({'activities': [
+            {
+                'id': ac.id,
+                'type': ac.type,
+                'description': ac.description,
+                'address': ac.address,
+                'max_capacity': ac.max_capacity,
+                'start_date': ac.start_date,
+                'image': ac.image,
+                'is_favorite': bool(ac.is_favorite)
+            } for ac in activities
+        ]})
+    except Exception as err:
+        raise
+
+
+@bp.route('/<int:activity_id>/book', methods=['POST'])
+@jwt_required()
+def book_activity(activity_id):
+    try:
+        ua = UserActivity(
+            user_id=current_user.id,
+            activity_id=activity_id
         )
-        return {'activities': [
-            ac.to_dict() for ac in activities
-        ]}
+        db.session.add(ua)
+        db.session.flush()
+        db.session.commit()
+        return jsonify(activity_id=activity_id)
+    except Exception as err:
+        raise
+
+
+@bp.route('/<int:activity_id>/unbook', methods=['POST'])
+@jwt_required()
+def unbook_activity(activity_id):
+    try:
+        ua = UserActivity.query.filter(
+            UserActivity.user_id == current_user.id,
+            UserActivity.activity_id == activity_id
+        ).first()
+        db.session.delete(ua)
+        db.session.commit()
+        return jsonify(activity_id=activity_id)
     except Exception as err:
         raise

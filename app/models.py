@@ -75,3 +75,12 @@ class Place(db.Model):
     description = db.Column(db.Text, nullable=False)
     address = db.Column(db.String(120))
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'))
+
+
+class UserActivity(db.Model):
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'activity_id'),
+    )
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=False)

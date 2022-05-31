@@ -27,7 +27,7 @@ const fetcher = () => {
       return response
     },
     async (error) => {
-      if(error.response.status > 400 && error.response.status < 500){
+      if(error.response.status == 401){ //> 400 && error.response.status < 500){
         await AsyncStorage.setItem('TOKEN', '')
         store.dispatch({type: 'LOGOUT'})
       }

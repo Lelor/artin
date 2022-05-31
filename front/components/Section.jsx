@@ -17,8 +17,8 @@ const Section = props => {
 
 const styles = StyleSheet.create({
     view:{
-        height: 40,
-        backgroundColor: '#b4b4b4',
+        height: 60,
+        backgroundColor: '#B87EDC',
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",

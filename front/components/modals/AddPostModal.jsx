@@ -43,7 +43,7 @@ const AddPostModal = (props) => {
             quality: 1,
             base64: true
           });
-          setForm({...form, image: result.base64})
+          setForm({...form, image: result.base64 || form.image})
       }}
       />
       <ModalDropdown

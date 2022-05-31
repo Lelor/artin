@@ -1,15 +1,22 @@
 import { useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import axios from '../utils';
 
 
 const Card = (props: any) => {
   const [cardState, setCardState] = useState({favorite: props.favorite})
 
   function toggleBookmark() {
-    setCardState({...cardState, favorite: !cardState.favorite})
+    const endpoint = `/activity/${props.id}/${cardState.favorite? 'unbook' : 'book'}`
+    axios().post(endpoint)
+    .then(res => {
+      setCardState({...cardState, favorite: !cardState.favorite})
+    })
+    .catch(err => {
+      console.log(err)
+    })
   }
-
   return (
     <>
     <TouchableOpacity
@@ -17,19 +24,6 @@ const Card = (props: any) => {
       onPress={props.onPress}
       activeOpacity={1}
     >
-      {
-        props.editable?
-        <>
-        </>
-        :
-        <Icon
-          name='bookmark'
-          size={25}
-          style={[styles.icon]}        
-          solid={cardState.favorite}
-          onPress={toggleBookmark}
-        />
-      }
       <View
         style={[styles.card]}
       >
@@ -43,12 +37,24 @@ const Card = (props: any) => {
         <View
           style={styles.outline}
         >
-          <Icon
-            name='trash-alt'
-            size={20}
-            style={styles.editIcons}
-            solid
-          />
+          {
+            props.editable?
+            <Icon
+              name='trash-alt'
+              size={20}
+              style={styles.editIcons}
+              solid
+              onPress={props.onDelete}
+            />
+            :
+            <Icon
+              name='bookmark'
+              size={25}
+              style={[styles.editIcons]}        
+              solid={cardState.favorite}
+              onPress={toggleBookmark}
+            />
+          }
           <Text
             style={styles.text}
             numberOfLines={7}
@@ -96,7 +102,9 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     margin: 10,
-    resizeMode: 'contain',
+    width: 130,
+    height: 168,
+    resizeMode: 'cover',
 },
   icon: {
     position: 'absolute',

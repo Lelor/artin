@@ -1,19 +1,27 @@
 
-import { useState } from 'react'
-import { StyleSheet, View, Text, Pressable, Modal } from 'react-native'
-import { Tabs } from '../components'
 import Footer from '../components/Footer'
-import { useNavigation } from '@react-navigation/native'
+import ActivitiesTab from './ActivitiesTab'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+
+const Tab = createMaterialTopTabNavigator();
 
 const Main = (props) => {
   return (
   <>
-    <Tabs/>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarItemStyle: { height: 60 },
+        tabBarStyle: { backgroundColor: '#B87EDC' },
+      }}
+    >
+      <Tab.Screen 
+          name='Atividades'
+          component={ActivitiesTab}/>
+    </Tab.Navigator>
     <Footer/>
   </>
   )
 }
-
 
 export default Main
