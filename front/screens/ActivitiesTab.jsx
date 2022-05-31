@@ -43,7 +43,8 @@ const ActivitiesTab = (props) => {
             style={styles.card}
             favorite={card.is_favorite}
             image={card.image}
-            // editable
+            address={card.address}
+            title={card.title}
             onPress={()=> showModal(card)}
           />
         ))}
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff'
     },
     card: {
-      padding: 8
+      padding: 16
     }
   });
 

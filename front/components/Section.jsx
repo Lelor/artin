@@ -23,11 +23,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 8
-        
+        padding: 16
     },
     title: {
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#fff',
+        
     },
     children: {
         display: "flex",

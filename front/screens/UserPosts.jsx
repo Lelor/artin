@@ -48,7 +48,7 @@ const UserPosts = (props) => {
 
       </Modal>
       <Section
-      title='Minhas publicações'
+      title='Meus Registros'
       >
         <Button
           style={styles.button}

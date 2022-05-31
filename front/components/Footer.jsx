@@ -1,16 +1,12 @@
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import TicketI from '../assets/svg/local_activity.svg'
-import UserI from '../assets/svg/user.svg'
-import BookmarkI from '../assets/svg/bookmark.svg'
-import HomeI from '../assets/svg/home.svg'
 
-const iconSize = 32
-const Icons = {
-  home: <HomeI width={iconSize} height={iconSize}/>,
-  ticket: <TicketI/>,
-  bookmark: <BookmarkI width={iconSize} height={iconSize}/>,
-  user: <UserI width={iconSize} height={iconSize}/>,
+
+const icons = {
+  home: require('../assets/home.png'),
+  ticket: require('../assets/ticket.png'),
+  bookmark: require('../assets/bookmark.png'),
+  user: require('../assets/user.png'),
 }
 
 
@@ -19,7 +15,10 @@ export const FooterButton = (props) => (
       style={styles.footerButton}
       onPress={props.onPress}
     >
-      {Icons[props.icon]}
+      <Image
+        style={styles.image}
+        source={icons[props.icon]}
+      />
     </TouchableOpacity>
 )
 
@@ -66,8 +65,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         display: "flex",
     },
-    icon: {
-      fontSize: 40,
+    image: {
+      width: 32,
+      height: 32,
     }
   });
 

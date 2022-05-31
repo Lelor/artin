@@ -27,14 +27,66 @@ const Card = (props: any) => {
       <View
         style={[styles.card]}
       >
-        <Image
-          style={styles.image}
-          // source={require('../assets/gnu-logo.png')}
-          source={props.image? {
-            uri: `data:image/png;base64,${props.image}`
-          } : require('../assets/gnu-logo.png')}
-        />
         <View
+          style={styles.cardHeader}
+        >
+          <Text
+            style={styles.headerText}
+          >
+            Banana
+          </Text>
+          <Icon
+              name='chevron-right'
+              size={20}
+              style={{fontSize: 24, paddingRight: 12}}
+              light
+              onPress={props.onDelete}
+            />
+        </View>
+        <View
+          style={styles.cardContent}
+        >
+          <Image
+            style={styles.image}
+            // source={require('../assets/gnu-logo.png')}
+            source={props.image? {
+              uri: `data:image/png;base64,${props.image}`
+            } : require('../assets/gnu-logo.png')}
+          />
+          <View
+            style={styles.cardInfo}
+          >
+            <Icon
+              name={props.editable? 'trash-alt' : 'bookmark'}
+              size={25}
+              style={[styles.bookMark]}        
+              solid={cardState.favorite}
+              onPress={props.editable? props.onDelete: toggleBookmark}
+            />
+            <Text
+              style={{color: '#A1A1A1', fontSize: 12, marginTop: 4}}
+            >
+              Descrição
+            </Text>
+            <Text
+              style={styles.text}
+              numberOfLines={2}
+            >
+              {props.description}
+            </Text>
+            <Text
+              style={{color: '#A1A1A1', fontSize: 12, marginTop: 4}}
+            >
+              Localização
+            </Text>
+            <Text
+              style={{...styles.text, height: 30}}
+            >
+              {props.address}
+            </Text>
+          </View>
+        </View>
+        {/* <View
           style={styles.outline}
         >
           {
@@ -61,7 +113,7 @@ const Card = (props: any) => {
           >
             {props.description}
           </Text>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
     </>
@@ -79,31 +131,70 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    width: '100%'
+  },
+  bookMark: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    padding: 8,
+    fontSize: 20,
+    zIndex: 1
   },
   card: {
     // margin: 20,
-    borderColor: '#b4b4b4',
-    borderWidth: 1,
-    height: 170,
-    width: 340,
-    borderRadius: 8,
+    borderColor: '#F6A80E',
+    borderWidth: 3,
+    height: 186,
+    // width: 340,
+    borderRadius: 12,
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  cardHeader: {
+    height: 48,
+    width: '101%',
+    backgroundColor: '#F6A80E',
+    borderTopRightRadius: 12,
+    borderTopLeftRadius: 12,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  cardContent: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row'
+  },
+  cardInfo: {
+    flex: 1,
+    // backgroundColor: 'red'
+  },
+  headerText: {
+    paddingLeft: 12,
+    color: '#fff',
+    height: '100%',
+    textAlignVertical: 'center',
+    fontSize: 16,
+    fontWeight: 'bold'
   },
   text: {
-    padding: 5,
-    borderColor: 'red',
-    borderWidth: 1,
-    height: 124,
-    width: 210,
-    fontSize: 17
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
+    color: '#000',
+    height: 45,
+    fontSize: 14,
+    width: 189
   },
   image: {
-    flex: 1,
+    borderColor: '#F6A80E',
+    borderWidth: 1,
     margin: 10,
-    width: 130,
-    height: 168,
+    borderRadius: 55,
+    width: 110,
+    height: 110,
     resizeMode: 'cover',
 },
   icon: {
