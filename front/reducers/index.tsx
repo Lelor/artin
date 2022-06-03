@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const loginAction = (token: any) => ({
     type: 'LOGIN',
@@ -15,6 +16,7 @@ function rootReducer(state: any = initialState, action: any) {
         case 'LOGIN':
             return {...state, token: action.token};
         case 'LOGOUT':
+            AsyncStorage.setItem('TOKEN', '')
             return {...state, token: ''};
     }
     return state

@@ -3,11 +3,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Provider, useSelector } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import { store } from './reducers'
+import ProfileScreen from './screens/Profile';
 import Main from './screens/Main'
 import Login from './screens/Login'
 import UserPosts from './screens/UserPosts'
+import UserBookings from './screens/UserBookings';
 
 import useCachedResources from './hooks/useCachedResources';
 
@@ -17,8 +19,12 @@ function Content() {
   // AsyncStorage.clear()
   const [storageToken, setStorageToken] = useState(null)
   const sessionToken = useSelector((state: any) => state.token)
+  const dispatch = useDispatch()
   AsyncStorage.getItem('TOKEN')
-    .then((token: any) => setStorageToken(token))
+    .then((token: any) => {
+      setStorageToken(token)
+      dispatch({type: 'LOGIN', token})
+    })
   return (
     <NavigationContainer>
       <StatusBar
@@ -30,7 +36,7 @@ function Content() {
           animation: 'none'
         }}
       >
-        {sessionToken || storageToken?
+        {storageToken?
         <>
         <Stack.Screen
           name="Main"
@@ -42,6 +48,14 @@ function Content() {
         <Stack.Screen
           name="UserPosts"
           component={UserPosts}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+        />
+        <Stack.Screen
+          name="Bookings"
+          component={UserBookings}
         />
         </>
         :

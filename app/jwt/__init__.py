@@ -39,4 +39,10 @@ def login_route(data):
 @bp.route('/whoami', methods=['GET'])
 @jwt_required()
 def whoami():
-    return jsonify(current_user.given_name)
+    return jsonify({
+        'image': current_user.image,
+        'name': current_user.name,
+        'biography': current_user.biography or '',
+        'birth_date': current_user.birth_date or '',
+        'address': current_user.address or '',
+    })

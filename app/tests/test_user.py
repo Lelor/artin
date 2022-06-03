@@ -10,8 +10,8 @@ class TestUser(BaseTestCase):
     @mock.patch('app.user.views.db')
     def test_should_create_new_user_and_return_201(self, m_db, m_user):
         body = {
-            'given_name': 'abobrinha',
-            'family_name': 'abobrinha',
+            'name': 'abobrinha',
+            'biography': 'bananinha',
             'email': 'xpto@xpto.com',
             'username': 'banana',
             'password': 'banana'
@@ -25,8 +25,8 @@ class TestUser(BaseTestCase):
     @mock.patch('app.user.views.db')
     def test_should_not_create_new_user_and_return_409_on_conflict(self, m_db):
         body = {
-            'given_name': 'abobrinha',
-            'family_name': 'abobrinha',
+            'name': 'abobrinha',
+            'biography': 'bananinha',
             'email': 'xpto@xpto.com',
             'username': 'banana',
             'password': 'banana'

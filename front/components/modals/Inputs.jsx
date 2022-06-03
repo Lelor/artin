@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Input from "../TextInput"
-import { StyleSheet, Text, Image } from "react-native"
+import { StyleSheet, Text, Image, View } from "react-native"
 import RNPickerSelect from 'react-native-picker-select';
 import DatePicker from '@react-native-community/datetimepicker'
 import Button from "../Button";
@@ -8,25 +8,33 @@ import { formatDate } from "../../utils"
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 
-const _inputWrapper = (props) => (
-  <>
-      <Text
-      style={styles.inputTitle}
-      >
-      {props.title || 'Title here'}
-      </Text>
-      {props.children}
-  </>
-)
+const _inputWrapper = (props) => {
+  return (
+    <>
+        <Text
+        style={{...styles.inputTitle, ...props.style}}
+        >
+        {props.title || 'Title here'}
+        </Text>
+        {props.children}
+    </>
+  ) 
+}
 
 export const ModalTextInput = (props) => (
   <_inputWrapper
     title={props.title}
+    style={props.labelStyle}
   >
     <Input
-      {...props}
+      secureTextEntry={props.secureTextEntry}
+      multiline={props.multiline}
+      onChangeText={props.onChangeText}
+      editable={props.editable}
+      value={props.value}
+      keyboardType={props.keyboardType}
       contextMenuHidden={props.editable}
-      style={props.multiline? {...styles.input, ...styles.multilineInput}: styles.input}
+      style={[props.multiline? {...styles.input, ...styles.multilineInput}: styles.input, props.style]}
     />
   </_inputWrapper>
 )
@@ -35,11 +43,14 @@ export const ModalDropdown = (props) => {
   return(
     <_inputWrapper
       title={props.title}
+      style={props.labelStyle}
     >
       <RNPickerSelect
+        placeholder={{label: 'Selecione', value: null}}
+        value={null}
         disabled={!props.editable}
         {...props}
-        style={pickerSelectStyles}
+        style={{...pickerSelectStyles, ...props.style}}
         useNativeAndroidPickerStyle={false}
       >
         {props.children}
@@ -54,6 +65,7 @@ export const ModalDatePicker = (props) => {
   return (
     <_inputWrapper
       title={props.title}
+      style={props.labelStyle}
     >
       <Button
         activeOpacity={!props.editable? 1: null}
@@ -65,7 +77,7 @@ export const ModalDatePicker = (props) => {
         <Text
           style={{textAlign: 'left'}}
         >
-          {formatDate(props.value)}
+          {props.value? formatDate(props.value): null}
         </Text>
       </Button>
       {
@@ -85,7 +97,7 @@ export const ModalDatePicker = (props) => {
 
 export const ModalImagePicker = props => {
   const additionalStyles = {width: props.size, height: props.size, borderRadius: props.size/2}
-  const [buttonStyle, setButtonStyle] = useState(props.image? styles.imagePickerSelected: {...styles.imagePickerUnselected, ...additionalStyles})
+  const [buttonStyle, setButtonStyle] = useState(props.image? styles.imagePickerSelected: {...styles.imagePickerUnselected, ...additionalStyles, ...props.style})
   const content = props.image ?
   (
   <Image
@@ -94,7 +106,7 @@ export const ModalImagePicker = props => {
       }}
     // source={require('../../assets/gnu-logo.png')}
     resizeMode="cover"
-    style={styles.imagePickerSelected}
+    style={props.keepRound ? {...styles.imagePickerSelectedRound, ...additionalStyles} : styles.imagePickerSelected}
   />
   ) 
   :
@@ -108,10 +120,10 @@ export const ModalImagePicker = props => {
   return (
     <Button
       activeOpacity={props.editable? 0.2: 1}
-      style={buttonStyle}
+      style={{...buttonStyle}}
       onPress={props.editable ? ()=>{
         props.onPress()
-        setButtonStyle(styles.imagePickerSelected)
+        setButtonStyle(props.keepRound? {...props.style, ...styles.imagePickerSelectedRound, ...additionalStyles} : styles.imagePickerSelected)
       } : null}
     >
       {content}
@@ -119,41 +131,134 @@ export const ModalImagePicker = props => {
   )
 }
 
+
+export const ModalitiesInput = props => {
+  return (
+    <_inputWrapper
+    title={props.title}
+    style={props.labelStyle}
+    >
+      {props.editable && <RNPickerSelect
+        // disabled={!props.editable}
+        items={[
+          { label: 'Música', value: 'musica' },
+          { label: 'Dança', value: 'danca' },
+          { label: 'Escultura', value: 'escultura' },
+          { label: 'Teatro', value: 'teatro' },
+          { label: 'Literatura', value: 'literatura' },
+          { label: 'Cinema', value: 'cinema' },
+          { label: 'Fotografia', value: 'fotografia' },
+          { label: 'História', value: 'historia' },
+          { label: 'Jogos', value: 'jogos' },
+          { label: 'Arte Digital', value: 'artedigital' }
+        ]}
+        style={modalityPicker}
+        useNativeAndroidPickerStyle={false}
+        onValueChange={(v)=>props.onChange([... new Set(props.value.concat(v))])}
+      >
+        <Button
+          style={{margin: 8, marginLeft: 16, width: 110, borderRadius: 55, alignSelf: 'flex-start', borderWidth: 0, backgroundColor: '#F6A80E', flexDirection: 'row', justifyContent: 'space-around'}}
+        >
+          <Text
+            style={{alignSelf:'center', color:'#fff', fontSize: 14, fontWeight: '900'}}
+          >Adicionar</Text>
+          <Icon
+            style={{fontSize: 14, color: '#000'}}
+            name='plus'
+          />
+        </Button>
+      </RNPickerSelect>}
+      <View
+        style={styles.modalities}
+      >
+      {
+        props.value.map(s => (
+          <View
+            key={props.value.indexOf(s)}
+            style={styles.selectedModality}
+          >
+            <Text style={{paddingLeft: 2}}>{s}</Text>
+            {props.editable && <Icon
+              style={{fontSize: 12, position: 'absolute', alignSelf: 'flex-end', paddingRight: 4, color: 'red'}}
+              name='times'
+              onPress={()=> {
+                props.onChange(props.value.filter(i => i !== s))
+              }}
+            />}
+          </View>
+        ))
+      }
+      </View>
+    </_inputWrapper>
+  )
+}
+
+
 const styles = StyleSheet.create({
+  modalities: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderBottomWidth: 1,
+    borderBottomColor: '#000',
+    width: '100%',
+    alignSelf: 'center',
+    padding: 8,
+    paddingLeft: 0
+  },
+  selectedModality: {
+    margin: 1,
+    marginLeft: 8,
+    height: 20,
+    width: 100,
+    borderWidth: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    borderColor: '#b4b4b4'
+  },
   inputTitle: {
-    paddingTop: 16,
-    padding: 8
+    color: '#A1A1A1',
+    fontSize: 12,
   },
   input: {
     fontSize: 16,
-    width: '95%',
+    width: '100%',
     height: 40,
-    borderWidth: 1,
-    borderColor: '#b0b0b0',
+    borderWidth: 0,
+    borderBottomWidth: 1,
+    borderColor: '#000',
     textAlign: 'left',
-    borderRadius: 3,
     paddingLeft: 10,
     alignSelf: 'center',
     backgroundColor: '#fff',
-    color: 'black'
+    color: 'black',
+    alignItems: "flex-start"
   },
   multilineInput: {
     height: 100
   },
   imagePickerUnselected: {
     alignSelf: 'center',
-    margin: 8,
-    marginTop: 16,
-    backgroundColor: '#cfcfcf'
+    backgroundColor: '#F6A80E'
   },
   imagePickerSelected:{
     width: '100%',
     borderRadius: 0,
+    borderTopRightRadius: 12,
+    borderTopLeftRadius: 12,
     height: 210,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+  },
+  imagePickerSelectedRound:{
+    backgroundColor: '#F6A80E',
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderColor: '#F6A80E'
   },
   imagePickerIcon: {
-    color: '#4d4d4d'
+    color: '#000'
   }
 })
 
@@ -172,4 +277,11 @@ const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     ...styles.input
   },
+})
+
+const modalityPicker = StyleSheet.create({
+  inputAndroid: {
+    ...styles.input,
+    borderBottomWidth: 0
+  }
 })

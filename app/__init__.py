@@ -3,6 +3,7 @@ from flask_alembic import Alembic
 
 from app.user import bp as user_bp
 from app.activity import bp as activity_bp
+from app.place import bp as place_bp
 from app.jwt import jwt
 from app.jwt import bp as jwt_bp
 from app.models import db, ma
@@ -17,6 +18,7 @@ def create_app():
     Alembic(app)
     app.register_blueprint(user_bp)
     app.register_blueprint(activity_bp)
+    app.register_blueprint(place_bp)
     app.register_blueprint(jwt_bp)
     # with app.app_context():
     #     @app.before_request

@@ -1,17 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import axios from '../utils';
 
 
 const Card = (props: any) => {
-  const [cardState, setCardState] = useState({favorite: props.favorite})
-
   function toggleBookmark() {
-    const endpoint = `/activity/${props.id}/${cardState.favorite? 'unbook' : 'book'}`
+    const endpoint = `/activity/${props.id}/${props.favorite? 'unbook' : 'book'}`
     axios().post(endpoint)
     .then(res => {
-      setCardState({...cardState, favorite: !cardState.favorite})
+      props.onToggleBookmark && props.onToggleBookmark()
     })
     .catch(err => {
       console.log(err)
@@ -32,8 +30,9 @@ const Card = (props: any) => {
         >
           <Text
             style={styles.headerText}
+            numberOfLines={1}
           >
-            Banana
+            {props.title}
           </Text>
           <Icon
               name='chevron-right'
@@ -56,14 +55,15 @@ const Card = (props: any) => {
           <View
             style={styles.cardInfo}
           >
-            <Icon
+            {!props.nonInteractable && <Icon
               name={props.editable? 'trash-alt' : 'bookmark'}
               size={25}
               style={[styles.bookMark]}        
-              solid={cardState.favorite}
+              solid={props.favorite}
               onPress={props.editable? props.onDelete: toggleBookmark}
-            />
+            />}
             <Text
+              numberOfLines={1}
               style={{color: '#A1A1A1', fontSize: 12, marginTop: 4}}
             >
               Descrição
@@ -81,39 +81,12 @@ const Card = (props: any) => {
             </Text>
             <Text
               style={{...styles.text, height: 30}}
+              numberOfLines={1}
             >
               {props.address}
             </Text>
           </View>
         </View>
-        {/* <View
-          style={styles.outline}
-        >
-          {
-            props.editable?
-            <Icon
-              name='trash-alt'
-              size={20}
-              style={styles.editIcons}
-              solid
-              onPress={props.onDelete}
-            />
-            :
-            <Icon
-              name='bookmark'
-              size={25}
-              style={[styles.editIcons]}        
-              solid={cardState.favorite}
-              onPress={toggleBookmark}
-            />
-          }
-          <Text
-            style={styles.text}
-            numberOfLines={7}
-          >
-            {props.description}
-          </Text>
-        </View> */}
       </View>
     </TouchableOpacity>
     </>
@@ -176,6 +149,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     color: '#fff',
     height: '100%',
+    width: "80%",
     textAlignVertical: 'center',
     fontSize: 16,
     fontWeight: 'bold'
@@ -186,7 +160,8 @@ const styles = StyleSheet.create({
     color: '#000',
     height: 45,
     fontSize: 14,
-    width: 189
+    width: 189,
+    textAlignVertical: 'center'
   },
   image: {
     borderColor: '#F6A80E',

@@ -35,6 +35,7 @@ const Footer = (props) => {
       <FooterButton
         title='Atividades'
         icon='bookmark'
+        onPress={() => {navigation.navigate('Bookings')}}
       />
       <FooterButton
         title='Registros'
@@ -44,6 +45,7 @@ const Footer = (props) => {
       <FooterButton
         title='Perfil'
         icon='user'
+        onPress={() => {navigation.navigate('Profile')}}
       />
     </View>
   )
