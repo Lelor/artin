@@ -4,7 +4,13 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import axios from '../utils';
 
 
-const Card = (props: any) => {
+const placeholders = {
+  place: require('../assets/place.png'),
+  activity: require('../assets/activity.png')
+}
+
+
+const Card = (props) => {
   function toggleBookmark() {
     const endpoint = `/activity/${props.id}/${props.favorite? 'unbook' : 'book'}`
     axios().post(endpoint)
@@ -45,13 +51,16 @@ const Card = (props: any) => {
         <View
           style={styles.cardContent}
         >
-          <Image
-            style={styles.image}
-            // source={require('../assets/gnu-logo.png')}
-            source={props.image? {
-              uri: `data:image/png;base64,${props.image}`
-            } : require('../assets/gnu-logo.png')}
-          />
+          <View
+            style={styles.imageView}
+          >
+            <Image
+              style={props.image? styles.image : styles.imageUnselected}
+              source={props.image? {
+                uri: `data:image/png;base64,${props.image}`
+              } : placeholders[props.placeholder || 'activity']}
+            />
+          </View>
           <View
             style={styles.cardInfo}
           >
@@ -163,11 +172,26 @@ const styles = StyleSheet.create({
     width: 189,
     textAlignVertical: 'center'
   },
+  imageView:{
+    margin: 10,
+    backgroundColor: '#F6A80E',
+    borderRadius: 55,
+    width: 110,
+    height: 110,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  imageUnselected: {
+    width: 60,
+    height: 60,
+    resizeMode: 'cover',
+  },
   image: {
     borderColor: '#F6A80E',
-    borderWidth: 1,
-    margin: 10,
+    backgroundColor: '#F6A80E',
     borderRadius: 55,
+    borderWidth: 1,
     width: 110,
     height: 110,
     resizeMode: 'cover',

@@ -1,11 +1,13 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, KeyboardAvoidingView } from "react-native";
 import { ModalFooter, ModalHeader } from "./ModalUtils";
+import Toast from 'react-native-toast-message';
 
 
 const Modal = ({onCancel, onSubmit, onDelete, children, mode, title}) => {
   const editable = mode !== 'view'
   return (
-    <View
+    <>
+    <KeyboardAvoidingView
       style={{...styles.modalContainer, paddingBottom: editable? 0: styles.modalContainer.paddingBottom}}
     >
       {!editable && <ModalHeader onCancel={onCancel} title={title}/>}
@@ -16,7 +18,9 @@ const Modal = ({onCancel, onSubmit, onDelete, children, mode, title}) => {
           onSubmit={onSubmit}
         />
       )}
-    </View>
+    </KeyboardAvoidingView>
+    <Toast visibilityTime={2000} />
+    </>
   )
 }
 

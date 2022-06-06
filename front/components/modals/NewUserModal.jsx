@@ -9,13 +9,13 @@ import axios from "../../utils";
 
 const NewUserModal = (props) => {
   const [form, setForm] = useState({
-    name: props.data?.name || '',
-    biography: props.data?.biography || '',
-    address: props.data?.address || '',
-    birth_date: props.data?.modalities || new Date(),
-    image: props.data?.image || null,
-    email: props.data?.email || '',
+    name: '',
+    address: '',
+    birth_date: new Date(),
+    image: null,
+    email: '',
     password: '',
+    biography: ''
   })
 
   const [pwdValidation, setPwdValidation] = useState('')
@@ -64,17 +64,6 @@ const NewUserModal = (props) => {
             value={String(form.name)}
             onChangeText={(v) => {
               setForm({...form, name: v})
-            }}
-          />
-          <ModalTextInput
-            labelStyle={styles.input}
-            editable={editable}
-            title='Biografia'
-            style={styles.multiLine}
-            multiline={true}
-            value={String(form.biography)}
-            onChangeText={(v) => {
-              setForm({...form, biography: v})
             }}
           />
           <ModalDatePicker
@@ -151,11 +140,11 @@ const NewUserModal = (props) => {
 const styles = StyleSheet.create({
   viewContainer: {
     display: 'flex',
-    flex: 1,
     borderRadius: 12,
     backgroundColor: '#fff',
     padding: 16,
     paddingTop: 0,
+    paddingBottom: 16
   },
   multiLine:{
     height: 80,
@@ -164,10 +153,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#F6A80E',
-    paddingLeft: 16,
-    paddingRight: 16,
+    paddingHorizontal: 16,
     paddingBottom: 16,
-    flex: 1
+    marginBottom: 16
   },
   input: {
     marginTop: 16,

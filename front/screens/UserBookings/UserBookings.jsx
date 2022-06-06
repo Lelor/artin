@@ -40,6 +40,7 @@ const UserBookings = (props) => {
       <Section
       title='Meus Interesses'
       />
+      {cards.length?
       <ScrollView style={styles.view} contentContainerStyle={styles.scrollView}>
         {cards.map(card => (
           <Card
@@ -59,6 +60,15 @@ const UserBookings = (props) => {
           />
         ))}
       </ScrollView>
+      :
+      (
+        <View
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+        >
+          <Text>Você ainda não salvou nenhuma atividade.</Text>
+        </View>
+      )
+      }
       <Footer/>
     </>
   )

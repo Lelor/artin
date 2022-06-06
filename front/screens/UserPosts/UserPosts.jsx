@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ScrollView, StyleSheet, Modal, Image, View, Text, Pressable } from 'react-native'
 import Footer from '../../components/Footer'
 import Section from '../../components/Section'
@@ -8,6 +8,11 @@ import AddPlaceModal from '../../components/modals/AddPlaceModal'
 import axios from '../../utils'
 import Card from '../../components/Card'
 import UserPostsContext from './Context'
+import Toast from 'react-native-toast-message';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+
+const Tab = createMaterialTopTabNavigator();
 
 
 const UserPosts = (props) => {
@@ -15,22 +20,126 @@ const UserPosts = (props) => {
   const [placeModalVisible, setPlaceModalVisible] = useState(false)
   const [selectModalVisible, setSelectModalVisible] = useState(false)
   const [modalMode, setModalMode] = useState('create')
+  const [placeModalMode, setPlaceModalMode] = useState('create')
   const [cards, setCards] = useState([])
+  const [places, setPlaces] = useState([])
   const [currentCard, setCurrentCard] = useState(null)
-  const loadCards = () => {
-    axios().get('/activity/list/user')
+  const [currentPlace, setCurrentPlace] = useState(null)
+  const loadCards = async () => {
+    await axios().get('/activity/list/user')
     .then(res => {
       setCards(res.data.activities)
+    })
+    await axios().get('/place/list/user')
+    .then(res => {
+      setPlaces(res.data.places)
     })
   }
   const removeCard = (id) => {
     setCards(cards.filter(c=>c.id !== id))
+    Toast.show({
+      type: 'success',
+      text1: 'Removido com sucesso! ;)',
+    });
   };
+
+  const removePlace = (id) => {
+    setPlaces(places.filter(c=>c.id !== id))
+    Toast.show({
+      type: 'success',
+      text1: 'Removido com sucesso! ;)',
+    });
+  };
+
   function showModal(card, mode) {
     card ? setCurrentCard(card): setCurrentCard(null)
     mode ? setModalMode(mode): setModalMode('create')
     setActivityModalVisible(true)
   }
+  function showPlaceModal(card, mode) {
+    card ? setCurrentPlace(card): setCurrentPlace(null)
+    mode ? setPlaceModalMode(mode): setModalMode('create')
+    setPlaceModalVisible(true)
+  }
+  const ActivityTab = () => (cards.length?
+    <ScrollView style={styles.view} contentContainerStyle={styles.scrollView}>
+      {cards.map(card => (
+        <Card
+          key={card.id}
+          id={card.id}
+          description={card.description}
+          style={styles.card}
+          favorite={card.is_favorite}
+          image={card.image}
+          address={card.address}
+          title={card.title}
+          editable
+          onPress={()=> showModal(card, 'update')}
+          onDelete={()=>{
+            axios().post(`/activity/${card.id}/delete`)
+            .then(res => {
+              removeCard(card.id)
+            })
+            .catch(err => {
+              Toast.show({
+                type: 'error',
+                text1: 'Ocorreu um erro :(',
+                text2: 'Tente novamente mais tarde'
+              });
+            })
+          }}
+        />
+      ))}
+    </ScrollView>
+    :
+    (
+      <View
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+      >
+        <Text>Você ainda não criou nenhuma atividade.</Text>
+      </View>
+    )
+  )
+  const PlacesTab = () => {
+    return (places.length?
+    <ScrollView style={styles.view} contentContainerStyle={styles.scrollView}>
+      {places.map(card => (
+        <Card
+          key={card.id}
+          id={card.id}
+          description={card.description}
+          style={styles.card}
+          favorite={card.is_favorite}
+          image={card.image}
+          address={card.address}
+          title={card.name}
+          editable
+          onPress={()=> showPlaceModal(card, 'update')}
+          onDelete={()=>{
+            axios().post(`/place/${card.id}/delete`)
+            .then(res => {
+              removePlace(card.id)
+            })
+            .catch(err => {
+              Toast.show({
+                type: 'error',
+                text1: 'Ocorreu um erro :(',
+                text2: 'Tente novamente mais tarde'
+              });
+            })
+          }}
+        />
+      ))}
+    </ScrollView>
+    :
+    (
+      <View
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+      >
+        <Text>Você ainda não criou nenhum centro.</Text>
+      </View>
+    )
+  )}
   useEffect(loadCards, [])
   return (
     <UserPostsContext.Provider value=''>
@@ -39,7 +148,6 @@ const UserPosts = (props) => {
       transparent={true}
       visible={selectModalVisible}
       onRequestClose={() => {
-        Alert.alert("Modal has been closed.");
         setActivityModalVisible(!activityModalVisible);
       }}
       style={{backgroundColor: 'rgb(0, 0, 0, 0.8)'}}
@@ -97,8 +205,8 @@ const UserPosts = (props) => {
         visible={placeModalVisible}
         >
         <AddPlaceModal
-          data={currentCard}
-          mode={modalMode}
+          data={currentPlace}
+          mode={placeModalMode}
           onSubmit={() => {
             loadCards()
             setPlaceModalVisible(false)
@@ -117,36 +225,22 @@ const UserPosts = (props) => {
           onPress={()=>(setSelectModalVisible(true))}
         >
           <Image
-            // style={{width: 20, height: 20, borderRadius: 10}}
+            style={{width: 32, height: 32}}
             source={require('../../assets/new.png')}
             resizeMode='cover'
           />
         </Button>
       </Section>
-      <ScrollView style={styles.view} contentContainerStyle={styles.scrollView}>
-        {cards.map(card => (
-          <Card
-            key={card.id}
-            id={card.id}
-            description={card.description}
-            style={styles.card}
-            favorite={card.is_favorite}
-            image={card.image}
-            address={card.address}
-            title={card.title}
-            editable
-            onPress={()=> showModal(card, 'update')}
-            onDelete={()=>{
-              axios().post(`/activity/${card.id}/delete`)
-              .then(res => {
-                removeCard(card.id)
-              })
-              .catch(err => {
-              })
-            }}
-          />
-        ))}
-      </ScrollView>
+      <Tab.Navigator>
+        <Tab.Screen
+          name='Atividades'
+          component={ActivityTab}
+        />
+        <Tab.Screen
+          name='Centros'
+          component={PlacesTab}
+        />
+      </Tab.Navigator>
       <Footer/>
     </UserPostsContext.Provider>
   )
@@ -225,8 +319,8 @@ const styles = StyleSheet.create({
     button: {
       backgroundColor: null,
       borderWidth: 0,
-      width: 40,
-      height: 40
+      width: 32,
+      height: 32
     },
     card: {
       padding: 16,

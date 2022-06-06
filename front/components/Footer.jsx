@@ -16,7 +16,7 @@ export const FooterButton = (props) => (
       onPress={props.onPress}
     >
       <Image
-        style={styles.image}
+        style={[styles.image, props.size? {width: props.size, height: props.size}: null]}
         source={icons[props.icon]}
       />
     </TouchableOpacity>
@@ -33,6 +33,7 @@ const Footer = (props) => {
         onPress={() => {navigation.navigate('Main')}}
       />
       <FooterButton
+        size={24}
         title='Atividades'
         icon='bookmark'
         onPress={() => {navigation.navigate('Bookings')}}

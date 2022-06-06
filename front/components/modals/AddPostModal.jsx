@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ModalFooter, ModalHeader } from "./ModalUtils";
+import Toast from 'react-native-toast-message';
 import { ScrollView, Text, StyleSheet, View } from "react-native";
 import { ModalTextInput, ModalDropdown, ModalDatePicker, ModalImagePicker } from "./Inputs";
 import { useState } from "react";
@@ -60,11 +60,16 @@ const AddPostModal = (props) => {
               modes[props.mode].url,
               form
           )
-          .then(res => {})
-          .catch(err => {
-            console.log(err.response?.data)
+          .then(res => {
+            props.onSubmit()
           })
-          props.onSubmit()
+          .catch(err => {
+            Toast.show({
+              type: 'error',
+              text1: 'Erro no servidor',
+              text2: 'A criação da atividade não foi concluída!',
+            });
+          })
         }
       }}
     >

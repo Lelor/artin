@@ -1,15 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import axios from '../utils'
-import { Text, View, StyleSheet, Image, Modal} from 'react-native'
+import { Text, View, StyleSheet, Image, Modal, KeyboardAvoidingView, ScrollView} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Input from '../components/TextInput'
 import Button from '../components/Button'
 import { useDispatch } from 'react-redux';
 import NewUserModal from '../components/modals/NewUserModal';
+import Toast from 'react-native-toast-message';
+
+
+const LoginInput = props => {
+  return (
+    <>
+    <Text
+      style={{color: '#A1A1A1', fontSize: 16, marginTop: 16}}
+    >
+      {props.title}
+    </Text>
+    <Input
+      {...props}
+      style={styles.input}
+    />
+    </>
+  )
+}
 
 
 const Login = (props) => {
+
   const [loginState, setLoginState] = useState({email: '', password: ''})
   const [screenState, setScreenState] = useState({error: false})
   const [showModal, setShowModal] = useState(false)
@@ -34,63 +53,98 @@ const Login = (props) => {
         >
         <NewUserModal
           onSubmit={() => {
+            setShowModal(false)
+            Toast.show({
+              type: 'success',
+              text1: 'Sucesso!',
+              text2: 'Usuário cadastrado com sucesso',
+            });
           }}
           onCancel={() => {
             setShowModal(false)
           }}
         />
       </Modal>
-      <View
-        style={styles.view}
+      <KeyboardAvoidingView
+        style={{flex: 1, backgroundColor: '#B87EDC'}}
+        behavior='position'
       >
-        <Image
-          style={styles.logo}
-          source={require('../assets/gnu-logo.png')}
-        />
         <View
-          style={styles.loginContainer}
+          style={styles.view}
         >
-          <Input
-            placeholder="Email"
-            error={screenState.error}
-            style={styles.input}
-            onChangeText={(text) => (setLoginState({...loginState, email: text}))}
+          <Image
+            style={styles.logo}
+            source={require('../assets/logo.png')}
           />
-          <Input
-            secureTextEntry={true}
-            placeholder="Password"
-            error={screenState.error}
-            onChangeText = {(text) => (setLoginState({...loginState, password: text}))}
-            style={[{marginTop: 10, width: 150}, styles.input]}
-          />
-          {screenState.error && 
-            <Text
-              style={styles.errorText}
-            >
-              Credenciais inválidas
-            </Text>}
-          <Button
-            style={styles.button}
-            onPress={submitLogin}
+          <View
+            style={{padding: 24, paddingBottom: 0, display: 'flex', alignItems: 'center'}}
           >
             <Text
-              style={{fontWeight: 'bold'}}
+              style={styles.introText}
             >
-              Login
+              Encontre centros artísticos...
             </Text>
-          </Button>
-          <Button
-            style={styles.button}
-            onPress={()=>setShowModal(true)}
-          >
             <Text
-              style={{fontWeight: 'bold'}}
+              style={{...styles.introText, color: '#D9D9D9', marginTop: 4}}
             >
-              Criar Conta
+              Encontre atividades para participar...
+              </Text>
+            <Text
+              style={{...styles.introText, marginTop: 4}}
+            >
+              Conheça e participe de novas
             </Text>
-          </Button>
-        </View>  
-      </View>
+            <Text
+              style={styles.introText}
+            >
+              modalidades artísticas...
+            </Text>
+          </View>
+            <View
+              style={styles.loginContainer}
+            >
+              <LoginInput
+                title='E-mail'
+                error={screenState.error}
+                style={styles.input}
+                onChangeText={(text) => (setLoginState({...loginState, email: text}))}
+              />
+              <LoginInput
+                title='Senha'
+                secureTextEntry={true}
+                error={screenState.error}
+                onChangeText = {(text) => (setLoginState({...loginState, password: text}))}
+                style={[{marginTop: 10, width: 150}, styles.input]}
+              />
+              {screenState.error && 
+                <Text
+                  style={styles.errorText}
+                >
+                  Credenciais inválidas
+                </Text>}
+              <Button
+                style={styles.buttonPrimary}
+                onPress={submitLogin}
+              >
+                <Text
+                  style={{fontWeight: 'bold'}}
+                >
+                  Login
+                </Text>
+              </Button>
+              <Button
+                style={styles.buttonSecondary}
+                onPress={()=>setShowModal(true)}
+              >
+                <Text
+                  style={{fontWeight: 'bold'}}
+                >
+                  Criar Conta
+                </Text>
+              </Button>
+            </View>  
+        </View>
+      </KeyboardAvoidingView>
     </>
   )
 }
@@ -98,43 +152,53 @@ const Login = (props) => {
 
 const styles = StyleSheet.create({
   logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 25
+    width: 210,
+    height: 210,
+    alignSelf: 'center'
   },
   loginContainer: {
-    borderColor: 'black',
-    borderWidth: 1,
-    width: 300,
-    height: 400,
+    marginTop: 36,
+    borderColor: '#F6A80E',
+    borderWidth: 2,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 24,
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  view: {
-    display: 'flex',
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: 'blue',
-    borderWidth: 1,
+  },
+  view: {
+    padding: 16,
+    // height: '100%',
   },
   input: {
-    // width: 100,
-    fontSize: 20,
+    width: '100%',
+    fontSize: 16,
     textAlign: 'center',
     borderBottomWidth: 1,
-    borderColor: '#b0b0b0'
+    borderColor: '#000'
   },
-  button: {
-    width: 100,
-    height: 45,
-    marginTop: 80,
-    backgroundColor: '#8cff66'
+  buttonPrimary: {
+    width: '100%',
+    height: 30,
+    marginTop: 32,
+    backgroundColor: '#F6A80E'
+  },
+  buttonSecondary: {
+    width: '100%',
+    height: 30,
+    backgroundColor: '#fff',
+    margin: 8,
+    marginBottom: 0
   },
   errorText: {
     color: 'red',
     paddingTop: 15
+  },
+  introText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 16
   }
 })
 

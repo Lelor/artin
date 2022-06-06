@@ -104,7 +104,7 @@ export const ModalImagePicker = props => {
     source={{
         uri: `data:image/jpg;base64,${props.image}`
       }}
-    // source={require('../../assets/gnu-logo.png')}
+    // source={require('../../assets/place.png')}
     resizeMode="cover"
     style={props.keepRound ? {...styles.imagePickerSelectedRound, ...additionalStyles} : styles.imagePickerSelected}
   />

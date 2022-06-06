@@ -48,6 +48,7 @@ const ActivitiesTab = (props) => {
             address={card.address}
             title={card.name}
             onPress={()=> showModal(card)}
+            placeholder='place'
           />
         ))}
       </ScrollView>

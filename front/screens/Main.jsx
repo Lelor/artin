@@ -12,7 +12,7 @@ const Main = (props) => {
   <>
     <Tab.Navigator
       screenOptions={{
-        tabBarLabelStyle: {fontSize: 16, color: '#fff', fontWeight: 'bold'},
+        tabBarLabelStyle: {fontSize: 16, color: '#fff', fontWeight: 'bold', textTransform: null},
         tabBarItemStyle: { height: 60 },
         tabBarStyle: { backgroundColor: '#B87EDC' },
       }}

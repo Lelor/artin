@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { Dimensions, ScrollView, Text, View, StyleSheet, StatusBar, KeyboardAvoidingView } from "react-native";
 import Section from "../components/Section";
 import Footer from "../components/Footer";
 import { ModalImagePicker, ModalTextInput, ModalDatePicker } from "../components/modals/Inputs";
@@ -8,13 +8,15 @@ import Button from "../components/Button";
 import * as ImagePicker from 'expo-image-picker';
 import axios from "../utils";
 import { useDispatch } from "react-redux";
+import Toast from 'react-native-toast-message';
+
 
 const ProfileScreen = props => {
   const [form, setForm] = useState({
     name: props.data?.name || '',
     biography: props.data?.biography || '',
     address: props.data?.address || '',
-    birth_date: props.data?.modalities || new Date(),
+    birth_date: props.data?.birth_date? new Date(Date.parse(props.data.birth_date)) : new Date(),
     image: props.data?.image || null,
   })
   const editable = true;
@@ -26,40 +28,52 @@ const ProfileScreen = props => {
         name: res.data.name,
         biography: res.data.biography,
         address: res.data.address,
-        birth_date: res.data.birth_date || new Date(),
+        birth_date: res.data.birth_date? new Date(Date.parse(res.data.birth_date)) : new Date(),
       })
     })
   }, [])
-  dispatch = useDispatch()
+  const dispatch = useDispatch()
   return (
-    <>
-    <Section title='Meu Perfil'>
-      <Button
-        style={styles.saveButton}
-        onPress={()=>{
-          axios().post('/user/update', form)
-          .then(res => {
-            
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        }}
-      >
-        <Icon
-          name='save'
-          size={30}
-          style={{color: '#000'}}
-          light
-        />
-      </Button>
-    </Section>
     <View
         style={styles.container}
     >
-      {/* <ProfileContent/> */}
+      <Section title='Meu Perfil'>
+        <Button
+          style={styles.saveButton}
+          onPress={()=>{
+            axios().post('/user/update', form)
+            .then(res => {
+              Toast.show({
+                type: 'success',
+                text1: 'Salvo com sucesso! ;)',
+                // text2: 'Os seus dados foram atualizados',
+              });
+            })
+            .catch(err => {
+              Toast.show({
+                type: 'error',
+                text1: 'Ocorreu um erro :(',
+                text2: 'Tente novamente mais tarde',
+              });
+            })
+          }}
+        >
+          <Icon
+            name='save'
+            size={30}
+            style={{color: '#000'}}
+            light
+          />
+        </Button>
+      </Section>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior="height"
+        keyboardVerticalOffset={26}
+        enabled
+      >
       <ScrollView
-        contentContainerStyle={{...styles.viewContainer}}
+        style={{...styles.viewContainer}}
       >
         <ModalImagePicker
           style={styles.imagePicker}
@@ -131,9 +145,9 @@ const ProfileScreen = props => {
           </Button>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
+      <Footer/>
     </View>
-    <Footer/>
-    </>
   )
 }
 
@@ -141,7 +155,8 @@ const ProfileScreen = props => {
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    flex: 1
+    height: Dimensions.get('window').height - StatusBar.currentHeight,
+    width: Dimensions.get('window').width
   },
   saveButton: {
     backgroundColor: null,
@@ -151,7 +166,6 @@ const styles = StyleSheet.create({
   },
   viewContainer: {
     display: 'flex',
-    flex: 1,
     borderRadius: 12,
     backgroundColor: '#fff',
     padding: 16,
@@ -167,7 +181,6 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 16,
-    flex: 1
   },
   input: {
     marginTop: 16,

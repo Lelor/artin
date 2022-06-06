@@ -10,6 +10,7 @@ import Main from './screens/Main'
 import Login from './screens/Login'
 import UserPosts from './screens/UserPosts'
 import UserBookings from './screens/UserBookings';
+import Toast from 'react-native-toast-message';
 
 import useCachedResources from './hooks/useCachedResources';
 
@@ -68,15 +69,19 @@ function Content() {
   );
 }
 
+
 function App() {
   const isLoadingComplete = useCachedResources();
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
+      <>
       <Provider store = {store}>
         <Content/>
       </Provider>
+      <Toast visibilityTime={2000} />
+      </>
     );
   }
 }
