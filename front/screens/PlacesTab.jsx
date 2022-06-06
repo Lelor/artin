@@ -6,7 +6,7 @@ import axios from '../utils'
 import Card from '../components/Card'
 
 
-const ActivitiesTab = (props) => {
+const PlacesTab = (props) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [cards, setCards] = useState([])
   const [currentCard, setCurrentCard] = useState(null)
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   });
 
 
-export default ActivitiesTab
+export default PlacesTab
